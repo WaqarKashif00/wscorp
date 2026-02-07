@@ -1,0 +1,39 @@
+<section class="py-32 bg-white text-black relative min-h-screen">
+  <div class="container mx-auto px-6 relative z-10 pt-20">
+    <div class="mb-20">
+      <h2 class="text-xs font-bold tracking-[0.3em] uppercase mb-4 text-accent">Capabilities</h2>
+      <h1 class="text-5xl md:text-7xl font-black tracking-tighter">WHAT WE DO</h1>
+    </div>
+
+    <div class="space-y-32">
+      @for (service of services; track service.title; let i = $index) {
+      <div class="flex flex-col lg:flex-row gap-16 items-center" [class.lg:flex-row-reverse]="i % 2 !== 0">
+        <div class="w-full lg:w-1/2 group overflow-hidden">
+          <img [src]="service.image" [alt]="service.title"
+            class="w-full aspect-video object-cover transition-transform duration-700 group-hover:scale-110">
+        </div>
+        <div class="w-full lg:w-1/2">
+          <h3 class="text-3xl md:text-4xl font-black mb-6 flex items-center group">
+            <span class="text-accent mr-4 text-4xl group-hover:translate-x-2 transition-transform">&gt;</span>
+            {{ service.title }}
+          </h3>
+          <p class="text-xl text-gray-600 mb-8 leading-relaxed">{{ service.description }}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (detail of service.details; track detail) {
+            <div class="flex items-center gap-3 p-4 border border-gray-100 hover:border-accent transition-colors">
+              <div class="w-2 h-2 bg-accent"></div>
+              <span class="text-sm font-bold text-gray-700 uppercase tracking-wider">{{ detail }}</span>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Background decorative element -->
+  <div class="fixed top-0 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px] -z-10 pointer-events-none">
+  </div>
+</section>

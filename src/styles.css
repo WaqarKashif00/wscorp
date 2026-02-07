@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #000010;
+  --accent: #A100FF;
+  --accent-light: #C04DFF;
+  --text-main: #FFFFFF;
+  --text-muted: #A0A0A0;
+  --bg-dark: #000000;
+  --bg-charcoal: #121212;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* --- Typography System --- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.text-editorial {
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.text-accent-gradient {
+  background: linear-gradient(to right, var(--accent), var(--accent-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Accenture Purple Hover Effect --- */
+.purple-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.purple-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(161, 0, 255, 0) 0%, rgba(161, 0, 255, 0) 100%);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.purple-hover:hover::before {
+  background: linear-gradient(135deg, rgba(161, 0, 255, 0.85) 0%, rgba(100, 0, 180, 0.9) 100%);
+}
+
+
+/* --- Accenture Aura Animations --- */
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.scale-in {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.visible {
+  opacity: 1;
+  transform: translate(0) scale(1) !important;
+}
+
+/* Stagger Delays */
+.delay-1 {
+  transition-delay: 100ms;
+}
+
+.delay-2 {
+  transition-delay: 200ms;
+}
+
+.delay-3 {
+  transition-delay: 300ms;
+}
+
+.delay-4 {
+  transition-delay: 400ms;
+}
+
+.delay-5 {
+  transition-delay: 500ms;
+}
+
+/* --- Interaction Library --- */
+.accenture-card {
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.accenture-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-8px);
+  border-color: var(--accent);
+}
+
+.accenture-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.accenture-card:hover::after {
+  transform: scaleX(1);
+}
+
+.greater-than {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Layout Utils --- */
+.section-padding {
+  padding-top: 10rem;
+  padding-bottom: 10rem;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border: 2px solid var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}

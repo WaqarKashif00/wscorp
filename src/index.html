@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>WV Services Corp | Global Professional Services</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="assets/logo-primary.svg">
+</head>
+
+
+<body>
+  <app-root></app-root>
+  <script>
+    (function () {
+      const observerOptions = { threshold: 0.05, rootMargin: '50px' };
+
+      const intersectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, observerOptions);
+
+      function observeElements() {
+        const revealElements = document.querySelectorAll('.fade-up:not(.visible), .reveal-left:not(.visible), .reveal-right:not(.visible), .scale-in:not(.visible)');
+        revealElements.forEach(el => intersectionObserver.observe(el));
+      }
+
+      // Initial observation
+      observeElements();
+
+      // Re-observe when Angular adds new elements
+      const mutationObserver = new MutationObserver(() => {
+        observeElements();
+      });
+
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+    })();
+  </script>
+</body>
+
+
+</html>

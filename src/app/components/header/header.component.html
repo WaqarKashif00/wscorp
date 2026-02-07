@@ -1,0 +1,107 @@
+<header class="fixed w-full z-50 transition-all duration-700 glass border-none"
+  [ngClass]="{'py-2 bg-charcoal/95': isScrolled, 'py-6 bg-transparent': !isScrolled}">
+  <nav class="container mx-auto px-6 flex justify-between items-center">
+    <a routerLink="/" class="flex h-8 items-center group gap-4 reveal-left visible">
+      <div class="h-full flex items-center">
+        <!-- Exact viewBox to match path bounds (Y: 20 to 85) -->
+        <svg viewBox="5 20 90 65"
+          class="h-full w-auto text-white transform group-hover:scale-110 transition-transform duration-500">
+          <path d="M5 20 L30 85 L50 40 L70 85 L95 20" fill="none" stroke="currentColor" stroke-width="12"
+            stroke-linejoin="miter" />
+          <path d="M30 20 L50 65 L70 20" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linejoin="miter" />
+        </svg>
+      </div>
+      <div class="flex flex-col justify-between h-full border-l border-white/20 pl-4 py-0.5">
+        <span class="text-2xl font-black text-white tracking-tighter leading-none">WV</span>
+        <span class="text-[8px] font-black text-accent tracking-[0.4em] uppercase leading-none">Services
+          Corp</span>
+      </div>
+    </a>
+
+
+
+    <!-- Desktop Navigation -->
+    <ul class="hidden lg:flex space-x-12 items-center reveal-right visible">
+      <li>
+        <a routerLink="/" routerLinkActive="text-accent" [routerLinkActiveOptions]="{exact: true}"
+          class="text-xs font-bold uppercase tracking-[0.2em] hover:text-accent transition-all duration-300 text-white">
+          Home
+        </a>
+      </li>
+      <li>
+        <a routerLink="/services" routerLinkActive="text-accent"
+          class="text-xs font-bold uppercase tracking-[0.2em] hover:text-accent transition-all duration-300 text-white border-b-2 border-transparent hover:border-accent pb-1">
+          Services
+        </a>
+      </li>
+      <li>
+        <a routerLink="/projects" routerLinkActive="text-accent"
+          class="text-xs font-bold uppercase tracking-[0.2em] hover:text-accent transition-all duration-300 text-white border-b-2 border-transparent hover:border-accent pb-1">
+          Portfolio
+        </a>
+      </li>
+      <li>
+        <a routerLink="/contact" routerLinkActive="text-accent"
+          class="text-xs font-bold uppercase tracking-[0.2em] hover:text-accent transition-all duration-300 text-white border-b-2 border-transparent hover:border-accent pb-1">
+          Contact US
+        </a>
+      </li>
+      <li class="flex items-center">
+        <a href="#" class="text-white hover:text-accent transition-colors p-2">
+          <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
+            <path
+              d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+          </svg>
+        </a>
+      </li>
+
+
+    </ul>
+
+
+    <!-- Hamburger Button -->
+    <button class="lg:hidden focus:outline-none text-white p-2 z-[60] relative" (click)="toggleMenu()">
+      <div class="space-y-1.5 flex flex-col items-end">
+        <span class="block h-0.5 bg-white transition-all duration-500"
+          [ngClass]="{'w-8 rotate-45 translate-y-2': isMenuOpen, 'w-8': !isMenuOpen}"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all duration-500" [class.opacity-0]="isMenuOpen"></span>
+        <span class="block h-0.5 bg-white transition-all duration-500"
+          [ngClass]="{'w-8 -rotate-45 -translate-y-2': isMenuOpen, 'w-8': !isMenuOpen}"></span>
+      </div>
+    </button>
+
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div *ngIf="isMenuOpen"
+    class="lg:hidden fixed inset-0 w-full bg-black z-[-1] flex flex-col justify-center items-center h-screen animate-in fade-in duration-500">
+    <ul class="flex flex-col items-center space-y-10">
+      <li class="reveal-left delay-1 visible">
+        <a routerLink="/"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
+          (click)="toggleMenu()">Home</a>
+      </li>
+      <li class="reveal-left delay-2 visible">
+        <a routerLink="/services"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
+          (click)="toggleMenu()">Services</a>
+      </li>
+      <li class="reveal-left delay-3 visible">
+        <a routerLink="/projects"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
+          (click)="toggleMenu()">Portfolio</a>
+      </li>
+      <li class="reveal-left delay-4 visible">
+        <a routerLink="/contact"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
+          (click)="toggleMenu()">Contact US</a>
+      </li>
+    </ul>
+
+
+    <div class="mt-12 flex gap-8 reveal-right delay-5 visible">
+      <span class="text-accent text-3xl font-black">&gt;</span>
+    </div>
+
+  </div>
+</header>

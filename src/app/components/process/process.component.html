@@ -1,0 +1,43 @@
+<section class="py-32 bg-charcoal text-white relative overflow-hidden">
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="mb-24 reveal-left">
+            <h2 class="text-xs font-black tracking-[0.5em] uppercase mb-6 text-accent flex items-center gap-4">
+                <span class="w-12 h-[2px] bg-accent"></span>
+                The Methodology
+            </h2>
+            <h3 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-editorial">HOW WE CREATE
+                <br>360&deg; <span class="text-accent">VALUE</span>
+            </h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
+            @for (step of steps; track step.title; let i = $index) {
+            <div class="relative group reveal-left" [class]="'delay-' + (i + 1)">
+                <!-- Oversized Numbering -->
+                <div
+                    class="text-[10rem] font-black text-white/[0.03] absolute -top-20 -left-6 group-hover:text-accent/5 transition-all duration-700 select-none pointer-events-none">
+                    {{ step.number }}
+                </div>
+
+                <div class="relative z-10">
+                    <h4
+                        class="text-2xl font-black mb-8 group-hover:text-accent transition-all duration-300 leading-none tracking-tighter uppercase">
+                        {{ step.title }}</h4>
+                    <div
+                        class="w-16 h-[2px] bg-accent mb-10 transform origin-left transition-all duration-500 group-hover:w-full group-hover:opacity-100 opacity-40">
+                    </div>
+                    <p
+                        class="text-gray-400 leading-tight tracking-tight text-lg group-hover:text-white transition-colors duration-500">
+                        {{ step.description }}
+                    </p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Background Decoration -->
+    <div
+        class="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-accent/5 rounded-full blur-[150px] pointer-events-none">
+    </div>
+</section>
