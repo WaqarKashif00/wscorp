@@ -33,7 +33,7 @@ export class ProcessComponent {
         {
             number: '04',
             title: 'FINAL DELIVERY',
-            description: 'From tenant layouts to final inspections, we ensure your project is ready for business or living, meeting all quality and safety standards.'
+            description: 'Our final delivery phase transforms the design vision into a rigorous, code-compliant Permit Set designed to move through municipal reviews with minimal friction. This comprehensive package serves as the primary basis for permitting, bidding, and construction.'
         }
     ];
 }
