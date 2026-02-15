@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <footer class="bg-charcoal text-white pt-32 pb-20 relative overflow-hidden">
       <div class="container mx-auto px-6 relative z-10">
@@ -40,7 +41,7 @@ import { CommonModule } from '@angular/common';
           <div>
             <h5 class="text-[10px] font-black uppercase tracking-[0.4em] mb-10 text-accent">Insights</h5>
             <ul class="space-y-6 text-sm font-bold uppercase tracking-widest text-gray-500">
-              <li><a href="#" class="hover:text-white transition-colors">Case Studies</a></li>
+              <li><a routerLink="/projects" class="hover:text-white transition-colors">Case Studies</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Innovation Lab</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
               <li><a href="#" class="hover:text-white transition-colors">Locations</a></li>
@@ -80,6 +81,7 @@ import { CommonModule } from '@angular/common';
             <a href="#" class="hover:text-white transition-colors">Terms</a>
             <a href="#" class="hover:text-white transition-colors">Cookies</a>
             <a href="#" class="hover:text-white transition-colors">Accessibility</a>
+            <a routerLink="/admin" class="hover:text-white transition-colors border-l border-white/10 pl-10">Admin Login</a>
           </div>
           <p class="text-[10px] text-gray-700 font-bold uppercase tracking-[0.4em]">&copy; 2026 WV SERVICES CORP. 360 DEGREE VALUE.</p>
 

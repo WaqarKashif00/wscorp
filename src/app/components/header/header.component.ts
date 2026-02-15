@@ -1,6 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { CommonModule, NgIf, NgFor } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -9,11 +11,28 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit {
+  authService = inject(AuthService);
+  router = inject(Router);
+  user$ = this.authService.user$;
 
   isMenuOpen = false;
   isScrolled = false;
+  isHomePage = true;
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.isHomePage = event.urlAfterRedirects === '/' || event.urlAfterRedirects === '';
+    });
+    // Initial check
+    this.isHomePage = this.router.url === '/' || this.router.url === '';
+  }
+
+  async onLogout() {
+    await this.authService.logout();
+    if (this.isMenuOpen) this.toggleMenu();
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

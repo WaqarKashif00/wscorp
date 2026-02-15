@@ -1,12 +1,12 @@
 export const environment = {
     production: false,
     firebase: {
-        apiKey: "AIzaSyB035dPEdjcPcYVkjG6Cz2QbJLfmnJ-bVo",
-        authDomain: "wvservice-f3ec9.firebaseapp.com",
-        projectId: "wvservice-f3ec9",
-        storageBucket: "wvservice-f3ec9.firebasestorage.app",
-        messagingSenderId: "546877285490",
-        appId: "1:546877285490:web:d480110294534acfe48eeb",
-        measurementId: "G-EVMXY39TKW"
+  apiKey: "AIzaSyB9ApCyE1D2ZQhQ53ZFs5LvrK-lNZm6feI",
+  authDomain: "wv-services-corp.firebaseapp.com",
+  projectId: "wv-services-corp",
+  storageBucket: "wv-services-corp.firebasestorage.app",
+  messagingSenderId: "623230948708",
+  appId: "1:623230948708:web:4b78df6eef6751126e5671",
+  measurementId: "G-TVH253ZQ8W"
     }
 };

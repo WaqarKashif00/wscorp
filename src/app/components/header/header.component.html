@@ -1,5 +1,5 @@
 <header class="fixed w-full z-50 transition-all duration-700 glass border-none"
-  [ngClass]="{'py-2 bg-charcoal/95': isScrolled, 'py-6 bg-transparent': !isScrolled}">
+  [ngClass]="{'py-2 bg-black/95 shadow-lg': isScrolled || !isHomePage, 'py-6 bg-transparent': !isScrolled && isHomePage}">
   <nav class="container mx-auto px-6 flex justify-between items-center">
     <a routerLink="/" class="flex h-8 items-center group gap-4 reveal-left visible">
       <div class="h-full flex items-center">
@@ -46,7 +46,13 @@
           Contact US
         </a>
       </li>
-      <li class="flex items-center">
+      <li>
+        <a routerLink="/admin" routerLinkActive="text-accent"
+          class="text-xs font-bold uppercase tracking-[0.2em] hover:text-accent transition-all duration-300 text-white border-b-2 border-transparent hover:border-accent pb-1">
+          Admin
+        </a>
+
+      <li class="flex items-center ml-4">
         <a href="#" class="text-white hover:text-accent transition-colors p-2">
           <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24">
             <path
@@ -54,8 +60,6 @@
           </svg>
         </a>
       </li>
-
-
     </ul>
 
 
@@ -95,6 +99,17 @@
         <a routerLink="/contact"
           class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
           (click)="toggleMenu()">Contact US</a>
+      </li>
+      <li class="reveal-left delay-5 visible">
+        <a routerLink="/admin"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em]"
+          (click)="toggleMenu()">Admin</a>
+      </li>
+      <li class="reveal-left delay-6 visible" *ngIf="user$ | async">
+        <button (click)="onLogout()"
+          class="text-xl font-bold text-white hover:text-accent transition-colors block uppercase tracking-[0.3em] bg-transparent border-none p-0 cursor-pointer">
+          Logout
+        </button>
       </li>
     </ul>
 
