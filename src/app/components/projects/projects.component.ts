@@ -1,25 +1,21 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ProjectService } from '../../services/project.service';
+import { Project } from '../../models/project.model';
+import { Observable } from 'rxjs';
 
-interface Project {
-  title: string;
-  image: string;
-}
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-projects-preview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './projects.component.html'
 })
 export class ProjectsPreviewComponent {
-  projects: Project[] = [
-    { title: 'COMMERCIAL BUILDING', image: '/assets/images/projects/commercial.jpg' },
-    { title: 'CUSTOM HOUSE', image: '/assets/images/projects/house.jpg' },
-    { title: 'KITCHEN ADDITION', image: '/assets/images/projects/kitchen.jpg' },
-    { title: 'POOL HOUSE', image: '/assets/images/projects/pool.jpg' }
-  ];
+  projects$: Observable<Project[]>;
 
-
-
+  constructor(private projectService: ProjectService) {
+    this.projects$ = this.projectService.getHomepageProjects();
+  }
 }

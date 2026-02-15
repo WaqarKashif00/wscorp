@@ -1,0 +1,260 @@
+<div class="min-h-screen bg-black text-white p-6 font-sans">
+    <div class="container mx-auto max-w-6xl">
+
+        <!-- Login Section -->
+        <div *ngIf="!(user$ | async)"
+            class="max-w-md mx-auto glass rounded-xl shadow-2xl p-8 mt-20 border border-gray-800">
+            <h2 class="text-3xl font-black mb-6 text-center tracking-tighter uppercase font-heading">Admin Portal</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+                <div class="mb-6">
+                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Email
+                        Address</label>
+                    <input type="email" formControlName="email"
+                        class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+                <div class="mb-8">
+                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
+                    <input type="password" formControlName="password"
+                        class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+                <button type="submit" [disabled]="isLoading"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-sm shadow-lg shadow-purple-900/20">
+                    {{ isLoading ? 'Authenticating...' : 'Enter Dashboard' }}
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div *ngIf="user$ | async" class="dashboard animate-fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-10 pb-6 border-b border-gray-800">
+                <h1 class="text-4xl font-black tracking-tighter uppercase font-heading mb-4 md:mb-0"><span
+                        class="text-purple-500">Project</span> CMS</h1>
+                <div class="flex gap-4">
+                    <a routerLink="/"
+                        class="border border-gray-700 text-gray-400 px-4 py-2 rounded-lg hover:border-gray-500 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider flex items-center">
+                        Visit Site
+                    </a>
+                    <button (click)="onLogout()"
+                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors text-sm font-bold uppercase tracking-wider shadow-lg shadow-red-900/20">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Project List -->
+            <div *ngIf="!showForm" class="space-y-6">
+                <button (click)="startCreate()"
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg transition-all font-bold uppercase tracking-wider text-sm shadow-lg shadow-purple-900/30 flex items-center gap-2">
+                    <span class="text-xl">+</span> New Project
+                </button>
+
+                <div class="grid grid-cols-1 gap-4">
+                    @if (projects$ | async; as projects) {
+                    @if (projects.length > 0) {
+                    <div *ngFor="let project of projects"
+                        class="glass p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-purple-500/50 transition-colors group">
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-20 h-20 rounded-lg overflow-hidden bg-gray-900 shadow-inner block shrink-0 flex items-center justify-center">
+                                <img [src]="project.featuredImageUrl" alt=""
+                                    class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                    *ngIf="project.featuredImageUrl">
+                                <span *ngIf="!project.featuredImageUrl"
+                                    class="text-xs text-gray-600 font-bold uppercase">No Img</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl mb-1">{{ project.title }}</h3>
+                                <span
+                                    [class]="project.status === 'published' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-700/50 text-gray-400 border-gray-600/30'"
+                                    class="text-[10px] uppercase font-bold px-2 py-1 rounded border">
+                                    {{ project.status }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <button (click)="editProject(project)"
+                                class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">Edit</button>
+                            <button (click)="deleteProject(project.id!)"
+                                class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm font-bold transition-colors border border-red-500/20">Delete</button>
+                        </div>
+                    </div>
+                    } @else {
+                    <div class="glass p-12 rounded-xl border border-gray-800 text-center animate-pulse">
+                        <p class="text-gray-500 font-bold uppercase tracking-[0.2em] text-sm">No Projects in Database
+                        </p>
+                        <p class="text-gray-600 text-xs mt-2">Click "+ New Project" to start building your portfolio.
+                        </p>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+
+            <!-- Create/Edit Form -->
+            <div *ngIf="showForm" class="glass p-8 rounded-xl border border-gray-800 shadow-2xl">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold uppercase tracking-wide">{{ isEditing ? 'Edit Project' : 'Create
+                        Project' }}</h2>
+                    <button (click)="cancelEdit()" class="text-gray-400 hover:text-white transition-colors">
+                        ✕
+                    </button>
+                </div>
+
+                <form [formGroup]="projectForm" (ngSubmit)="saveProject()">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Title -->
+                        <div class="md:col-span-2">
+                            <label
+                                class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Title</label>
+                            <input formControlName="title"
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                        </div>
+
+                        <!-- Short Description -->
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Short
+                                Description</label>
+                            <input formControlName="shortDescription"
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors">
+                        </div>
+
+                        <!-- Full Description -->
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Full
+                                Description</label>
+                            <textarea formControlName="fullDescription" rows="6"
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors"></textarea>
+                        </div>
+
+                        <!-- Status -->
+                        <div>
+                            <label
+                                class="block text-gray-400 text-xs font-bold mb-2 uppercase tracking-wide">Status</label>
+                            <select formControlName="status"
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-purple-500 transition-colors appearance-none">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                            </select>
+                        </div>
+
+                        <!-- Show on Homepage Toggle -->
+                        <div class="flex items-center gap-4 py-2">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" formControlName="showOnHomepage" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600">
+                                </div>
+                                <span class="ml-3 text-xs font-bold text-gray-400 uppercase tracking-wide">Show on
+                                    Homepage</span>
+                            </label>
+                            <p class="text-[10px] text-gray-600 italic mt-1">(Max 4 stories)</p>
+                        </div>
+
+                        <!-- Cover Image Upload Section -->
+                        <div class="md:col-span-2 mt-4 pt-6 border-t border-gray-800">
+                            <label class="block text-gray-400 text-xs font-bold mb-4 uppercase tracking-wide">Project
+                                Cover Image (Mandatory field for thumbnails)</label>
+
+                            <div class="flex flex-col md:flex-row gap-6 items-start">
+                                <div
+                                    class="w-full md:w-64 aspect-video bg-gray-900 rounded-lg overflow-hidden border border-gray-700 relative">
+                                    <img *ngIf="selectedCoverPreview" [src]="selectedCoverPreview"
+                                        class="w-full h-full object-cover">
+                                    <div *ngIf="!selectedCoverPreview"
+                                        class="w-full h-full flex items-center justify-center text-gray-600 text-xs font-bold uppercase">
+                                        No Cover selected
+                                    </div>
+                                </div>
+
+                                <label
+                                    class="cursor-pointer bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 py-2 px-4 rounded-lg inline-flex items-center transition-colors border border-purple-500/30">
+                                    <span class="mr-2">↑</span> Select Cover Image
+                                    <input type="file" (change)="onCoverFileSelected($event)" class="hidden"
+                                        accept="image/*">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload Section -->
+                        <div class="md:col-span-2 mt-4 pt-6 border-t border-gray-800">
+                            <label class="block text-gray-400 text-xs font-bold mb-4 uppercase tracking-wide">Project
+                                Gallery Images</label>
+
+                            <div class="mb-6">
+                                <label
+                                    class="cursor-pointer bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded-lg inline-flex items-center transition-colors border border-gray-600 border-dashed">
+                                    <span class="mr-2">↑</span> Upload Gallery Images
+                                    <input type="file" multiple (change)="onFileSelected($event)" class="hidden">
+                                </label>
+                            </div>
+
+                            <!-- Combined Image List -->
+                            <div class="space-y-4">
+                                @if (existingImages.length === 0 && selectedImagePreviews.length === 0) {
+                                <div class="py-10 border-2 border-dashed border-gray-800 rounded-xl text-center">
+                                    <p class="text-gray-600 text-sm">No images in gallery yet. Upload some above.</p>
+                                </div>
+                                }
+                                <!-- Existing Images (Drag & Drop) -->
+                                <div *ngIf="existingImages.length > 0">
+                                    <h4 class="text-xs font-bold text-gray-500 mb-2 uppercase">Current Gallery
+                                        Images</h4>
+                                    <div cdkDropList (cdkDropListDropped)="drop($event)"
+                                        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                        <div *ngFor="let img of existingImages; let i = index" cdkDrag
+                                            class="relative group aspect-square bg-gray-900 rounded-lg overflow-hidden border border-gray-700 cursor-move hover:border-purple-500 transition-colors">
+
+                                            <img [src]="img.imageUrl" class="w-full h-full object-cover">
+
+                                            <!-- Overlay -->
+                                            <div
+                                                class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-2">
+                                                <button type="button" (click)="deleteImage(img, i)"
+                                                    class="text-xs bg-red-600 hover:bg-red-500 text-white px-2 py-1 rounded">
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- New Selection Previews -->
+                            <div *ngIf="selectedImagePreviews.length > 0">
+                                <h4 class="text-xs font-bold text-purple-400 mb-2 uppercase mt-4">New Selection
+                                    (Will be uploaded on save)</h4>
+                                <div cdkDropList (cdkDropListDropped)="dropNew($event)"
+                                    class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                    <div *ngFor="let preview of selectedImagePreviews; let i = index" cdkDrag
+                                        class="relative group aspect-square bg-gray-900 rounded-lg overflow-hidden border border-purple-500/50 cursor-move">
+
+                                        <img [src]="preview" class="w-full h-full object-cover opacity-80">
+
+                                        <div class="absolute inset-0 bg-black/40 flex justify-center items-center">
+                                            <button type="button" (click)="removeSelectedImage(i)"
+                                                class="text-xs bg-red-600 hover:bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-800">
+                        <button type="button" (click)="cancelEdit()"
+                            class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-6 py-2 rounded-lg text-sm font-bold uppercase tracking-wider transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" [disabled]="isLoading"
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-lg font-bold uppercase tracking-wider text-sm shadow-lg shadow-purple-900/40 transition-all hover:scale-[1.02]">
+                            {{ isLoading ? 'Saving...' : 'Save Changes' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

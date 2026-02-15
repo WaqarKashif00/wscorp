@@ -11,13 +11,16 @@
   },
   "dependencies": {
     "@angular/animations": "^17.3.11",
+    "@angular/cdk": "^17.3.10",
     "@angular/common": "^17.3.11",
     "@angular/compiler": "^17.3.11",
     "@angular/core": "^17.3.11",
+    "@angular/fire": "^17.0.0",
     "@angular/forms": "^17.3.11",
     "@angular/platform-browser": "^17.3.11",
     "@angular/platform-browser-dynamic": "^17.3.11",
     "@angular/router": "^17.3.11",
+    "firebase": "^10.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

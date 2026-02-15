@@ -1,0 +1,4 @@
+/* Custom styles if needed, Tailwind handles most */
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}

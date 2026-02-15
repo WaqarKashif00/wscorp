@@ -10,34 +10,33 @@
           <br><span class="text-accent">ACTION</span>
         </h3>
       </div>
-      <a href="#"
+      <a [routerLink]="['/projects']"
         class="text-xs font-black uppercase tracking-[0.3em] border-b-2 border-accent pb-4 hover:text-accent transition-all duration-300 group">
         View All Stories
         <span class="ml-2 greater-than group-hover:translate-x-3 transition-transform inline-block">&gt;</span>
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12" *ngIf="projects$ | async as projects">
+      @if (projects.length > 0) {
       @for (project of projects; track project.title; let i = $index) {
       <div class="group relative aspect-[16/10] overflow-hidden bg-charcoal cursor-pointer reveal-left"
-        [class]="'delay-' + ((i % 2) + 1)">
+        [class]="'delay-' + ((i % 2) + 1)" [routerLink]="['/projects', project.id]">
 
         <!-- Image with sophisticated transition -->
-        <img [src]="project.image" [alt]="project.title"
+        <img [src]="project.featuredImageUrl" [alt]="project.title"
           class="absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 group-hover:opacity-60"
           loading="lazy">
 
         <!-- Base Dark Overlay -->
         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 
-
-
         <!-- Content with staggered entry on hover -->
         <div class="absolute inset-0 p-12 flex flex-col justify-end z-10">
           <div class="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-700">
             <h4
               class="text-xs font-black tracking-[0.4em] uppercase mb-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              Case Study / Innovation
+             
             </h4>
             <h3 class="text-4xl md:text-5xl font-black mb-8 leading-none tracking-tighter">{{ project.title }}</h3>
 
@@ -48,12 +47,17 @@
           </div>
         </div>
 
-
         <!-- Signature Top Accent Bar -->
         <div
           class="absolute top-0 left-0 w-full h-1 bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left z-20">
         </div>
 
+      </div>
+      }
+      } @else {
+      <div class="col-span-full py-20 text-center border border-gray-800 rounded-2xl glass">
+        <h3 class="text-2xl font-bold text-gray-500 mb-2">No Featured Stories</h3>
+        <p class="text-gray-600 italic text-sm">Check back soon for our latest updates.</p>
       </div>
       }
     </div>

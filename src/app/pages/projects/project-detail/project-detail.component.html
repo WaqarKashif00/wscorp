@@ -1,0 +1,47 @@
+<div *ngIf="project$ | async as project" class="container mx-auto px-4 py-8">
+    <a routerLink="/projects" class="text-blue-600 hover:underline mb-4 inline-block">&larr; Back to Projects</a>
+
+    <h1 class="text-4xl font-bold mb-4">{{ project.title }}</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="lg:col-span-2">
+            <img [src]="project.featuredImageUrl" class="w-full h-auto rounded-lg shadow-lg mb-6" alt="Featured Image">
+
+            <div class="prose max-w-none">
+                <h2 class="text-2xl font-semibold mb-2">About this Project</h2>
+                <p class="whitespace-pre-line text-gray-700 leading-relaxed">{{ project.fullDescription }}</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <h3 class="text-xl font-bold mb-4">Gallery</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <div *ngFor="let img of images; let i = index" (click)="openLightbox(i)"
+                    class="cursor-pointer hover:opacity-80 transition aspect-square overflow-hidden rounded bg-gray-100">
+                    <img [src]="img.imageUrl" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div *ngIf="lightboxOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
+    (click)="closeLightbox()">
+    <button class="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300">&times;</button>
+
+    <div class="relative max-w-4xl w-full max-h-screen flex items-center justify-center">
+        <button (click)="prevImage($event)"
+            class="absolute left-0 text-white text-5xl hover:text-gray-300 p-2 transform -translate-x-full lg:translate-x-0">&lsaquo;</button>
+
+        <img [src]="images[currentImageIndex].imageUrl" class="max-w-full max-h-[90vh] object-contain rounded"
+            (click)="$event.stopPropagation()">
+
+        <button (click)="nextImage($event)"
+            class="absolute right-0 text-white text-5xl hover:text-gray-300 p-2 transform translate-x-full lg:translate-x-0">&rsaquo;</button>
+    </div>
+
+    <div class="absolute bottom-4 left-0 right-0 text-center text-white">
+        {{ currentImageIndex + 1 }} / {{ images.length }}
+    </div>
+</div>

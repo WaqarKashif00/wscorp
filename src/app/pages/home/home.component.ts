@@ -9,7 +9,14 @@ import { InsightsComponent } from '../../components/insights/insights.component'
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeroComponent, ServicesPreviewComponent, ProjectsPreviewComponent, ProcessComponent, InsightsComponent],
+  imports: [
+    CommonModule,
+    HeroComponent,
+    ServicesPreviewComponent,
+    ProjectsPreviewComponent,
+    ProcessComponent,
+    InsightsComponent
+  ],
   templateUrl: './home.component.html'
 })
 export class HomeComponent { }
