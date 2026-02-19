@@ -37,3 +37,11 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .DS_Store
+
+# Environments
+/src/environments/environment.ts
+/src/environments/environment.prod.ts
+
+# Env Files
+.env
+

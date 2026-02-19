@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "dev": "ng serve",
+    "config": "node scripts/set-env.js",
+    "prebuild": "npm run config",
+    "dev": "npm run config && ng serve",
     "build": "ng build",
     "watch": "ng build --watch",
     "test": "ng test"
@@ -31,6 +33,7 @@
     "@angular/compiler-cli": "^17.3.11",
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.18",
+    "dotenv": "^17.3.1",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
