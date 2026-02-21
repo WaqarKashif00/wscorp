@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import {
     Firestore,
     collection,
@@ -17,7 +18,7 @@ import {
     getDocs
 } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
-import { Observable, from, map, tap } from 'rxjs';
+import { Observable, from, map, tap, of } from 'rxjs';
 import { Project, ProjectImage } from '../models/project.model';
 
 @Injectable({
@@ -26,10 +27,14 @@ import { Project, ProjectImage } from '../models/project.model';
 export class ProjectService {
     private firestore: Firestore = inject(Firestore);
     private storage: Storage = inject(Storage);
+    private platformId = inject(PLATFORM_ID);
+    private isBrowser = isPlatformBrowser(this.platformId);
 
 
     // Get all published projects for public view
     getPublishedProjects(): Observable<Project[]> {
+        if (!this.isBrowser) return of([]);
+
         const col = collection(this.firestore, 'projects');
         const q = query(
             col,
@@ -56,6 +61,8 @@ export class ProjectService {
 
     // Get projects selected for the homepage (limit 4)
     getHomepageProjects(): Observable<Project[]> {
+        if (!this.isBrowser) return of([]);
+
         const col = collection(this.firestore, 'projects');
         const q = query(
             col,
@@ -78,6 +85,8 @@ export class ProjectService {
 
     // Get all projects for admin view
     getAllProjects(): Observable<Project[]> {
+        if (!this.isBrowser) return of([]);
+
         const col = collection(this.firestore, 'projects');
         return new Observable<Project[]>(subscriber => {
             return onSnapshot(col, (snapshot) => {
@@ -98,6 +107,8 @@ export class ProjectService {
     }
     // Get single project details
     getProject(id: string): Observable<Project | undefined> {
+        if (!this.isBrowser) return of(undefined);
+
         const docRef = doc(this.firestore, 'projects', id);
         return new Observable<Project | undefined>(subscriber => {
             return onSnapshot(docRef, (snapshot) => {
