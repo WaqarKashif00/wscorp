@@ -1,5 +1,4 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable, inject } from '@angular/core';
 import {
     Firestore,
     collection,
@@ -10,16 +9,16 @@ import {
     query,
     where,
     orderBy,
-    collectionData,
-    docData,
     Timestamp,
     onSnapshot,
     getDoc,
-    getDocs
+    getDocs,
+    setDoc
 } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
-import { Observable, from, map, tap, of } from 'rxjs';
+import { Observable, from, map, tap, of, catchError } from 'rxjs';
 import { Project, ProjectImage } from '../models/project.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -27,42 +26,35 @@ import { Project, ProjectImage } from '../models/project.model';
 export class ProjectService {
     private firestore: Firestore = inject(Firestore);
     private storage: Storage = inject(Storage);
-    private platformId = inject(PLATFORM_ID);
-    private isBrowser = isPlatformBrowser(this.platformId);
 
+    constructor() {
+        console.log('ProjectService: Initialized with Project ID:', environment.firebase.projectId);
+    }
 
-    // Get all published projects for public view
+    // Get all published projects for public view (Real-time)
     getPublishedProjects(): Observable<Project[]> {
-        if (!this.isBrowser) return of([]);
-
         const col = collection(this.firestore, 'projects');
-        const q = query(
-            col,
-            where('status', '==', 'published')
-        );
+        const q = query(col, where('status', '==', 'published'));
 
         return new Observable<Project[]>(subscriber => {
             return onSnapshot(q, (snapshot) => {
-                const projects = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Project[];
-                subscriber.next(projects);
-            }, (error) => subscriber.error(error));
-        }).pipe(
-            tap(projects => console.log('ProjectService: Fetched public projects', projects)),
-            map(projects => projects.sort((a, b) => {
-                const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-                const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-                return dateB - dateA;
-            }))
-        );
+                const projects = snapshot.docs.map(d => ({ id: d.id, ...d.data() })) as Project[];
+                const sorted = projects.sort((a, b) => {
+                    const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+                    const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+                    return dateB - dateA;
+                });
+                console.log(`ProjectService: Sync complete. ${projects.length} published projects online.`);
+                subscriber.next(sorted);
+            }, (err) => {
+                console.error('ProjectService ERROR (Public Sync):', err);
+                subscriber.next([]);
+            });
+        });
     }
 
     // Get projects selected for the homepage (limit 4)
     getHomepageProjects(): Observable<Project[]> {
-        if (!this.isBrowser) return of([]);
-
         const col = collection(this.firestore, 'projects');
         const q = query(
             col,
@@ -72,32 +64,28 @@ export class ProjectService {
 
         return new Observable<Project[]>(subscriber => {
             return onSnapshot(q, (snapshot) => {
-                const projects = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Project[];
+                const projects = snapshot.docs.map(d => ({ id: d.id, ...d.data() })) as Project[];
+                console.log(`ProjectService: Home sync complete. ${projects.length} featured projects.`);
                 subscriber.next(projects.slice(0, 4));
-            }, (error) => subscriber.error(error));
-        }).pipe(
-            tap(projects => console.log('ProjectService: Fetched homepage projects', projects))
-        );
+            }, (err) => {
+                console.error('ProjectService ERROR (Home Sync):', err);
+                subscriber.next([]);
+            });
+        });
     }
 
     // Get all projects for admin view
     getAllProjects(): Observable<Project[]> {
-        if (!this.isBrowser) return of([]);
-
         const col = collection(this.firestore, 'projects');
         return new Observable<Project[]>(subscriber => {
             return onSnapshot(col, (snapshot) => {
-                const projects = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Project[];
+                const projects = snapshot.docs.map(d => ({ id: d.id, ...d.data() })) as Project[];
                 subscriber.next(projects);
-            }, (error) => subscriber.error(error));
+            }, (error) => {
+                console.error('ProjectService ERROR (Admin Sync):', error);
+                subscriber.error(error);
+            });
         }).pipe(
-            tap(projects => console.log('ProjectService: Fetched all projects (admin)', projects)),
             map(projects => projects.sort((a, b) => {
                 const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
                 const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
@@ -105,10 +93,8 @@ export class ProjectService {
             }))
         );
     }
-    // Get single project details
-    getProject(id: string): Observable<Project | undefined> {
-        if (!this.isBrowser) return of(undefined);
 
+    getProject(id: string): Observable<Project | undefined> {
         const docRef = doc(this.firestore, 'projects', id);
         return new Observable<Project | undefined>(subscriber => {
             return onSnapshot(docRef, (snapshot) => {
@@ -117,74 +103,79 @@ export class ProjectService {
                 } else {
                     subscriber.next(undefined);
                 }
-            }, (error) => subscriber.error(error));
-        }).pipe(
-            tap(project => console.log('ProjectService: Fetched single project', project))
-        );
-    }
-
-    // Create new project
-    async createProject(project: Partial<Project>): Promise<string> {
-        const col = collection(this.firestore, 'projects');
-        const docRef = await addDoc(col, {
-            ...project,
-            createdAt: Timestamp.now()
+            }, (err) => {
+                console.error(`ProjectService ERROR (Project Detail ${id}):`, err);
+                subscriber.next(undefined);
+            });
         });
-        return docRef.id;
     }
 
-    // Update project
-    updateProject(id: string, data: Partial<Project>): Promise<void> {
+    async createProject(project: Partial<Project>): Promise<string> {
+        console.log('ProjectService: Creating project in Firestore...', project.title);
+        const col = collection(this.firestore, 'projects');
+        const newDocRef = doc(col); // Generate ID locally first
+        const data = {
+            ...project,
+            id: newDocRef.id,
+            createdAt: Timestamp.now()
+        };
+
+        console.log('ProjectService: Attempting to save document ID:', newDocRef.id);
+
+        // Add a 15-second timeout so it doesn't hang forever
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Firestore write timed out after 15s. Check your internet or Firebase Rules.')), 15000)
+        );
+
+        try {
+            await Promise.race([setDoc(newDocRef, data), timeout]);
+            console.log('ProjectService: ✅ Project saved successfully!');
+            return newDocRef.id;
+        } catch (error) {
+            console.error('ProjectService ERROR (createProject):', error);
+            throw error;
+        }
+    }
+
+    async updateProject(id: string, data: Partial<Project>): Promise<void> {
+        console.log('ProjectService: Updating project in Firestore...', id);
         const docRef = doc(this.firestore, 'projects', id);
-        return updateDoc(docRef, data);
+
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Firestore update timed out after 15s')), 15000)
+        );
+
+        try {
+            await Promise.race([updateDoc(docRef, data), timeout]);
+            console.log('ProjectService: ✅ Project updated successfully!');
+        } catch (error) {
+            console.error('ProjectService ERROR (updateProject):', error);
+            throw error;
+        }
     }
 
-    // Delete project
     deleteProject(id: string): Promise<void> {
         const docRef = doc(this.firestore, 'projects', id);
         return deleteDoc(docRef);
     }
 
-    // Image Management
-
-    // Upload Image
     async uploadImage(file: File, path: string): Promise<string> {
-        console.log('Starting image upload to path:', path);
+        console.log(`ProjectService: Uploading ${file.name} to ${path}...`);
         const storageRef = ref(this.storage, path);
         const result = await uploadBytes(storageRef, file);
         const url = await getDownloadURL(result.ref);
-        console.log('Upload successful! Download URL:', url);
+        console.log(`ProjectService: Uploaded ${file.name} -> ${url}`);
         return url;
     }
 
-    // Delete Image
     deleteImage(url: string): Promise<void> {
         const storageRef = ref(this.storage, url);
         return deleteObject(storageRef);
     }
 
-    // Subcollection for images logic
     getProjectImages(projectId: string): Observable<ProjectImage[]> {
-        const imagesCollection = collection(this.firestore, `projects/${projectId}/images`);
-        const q = query(imagesCollection, orderBy('orderIndex'));
-        return new Observable<ProjectImage[]>(subscriber => {
-            return onSnapshot(q, (snapshot) => {
-                const images = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...(doc.data() as any)
-                })) as ProjectImage[];
-                subscriber.next(images);
-            }, (error) => subscriber.error(error));
-        });
-    }
-
-    async addProjectImage(projectId: string, image: ProjectImage): Promise<void> {
-        const imagesCollection = collection(this.firestore, `projects/${projectId}/images`);
-        await addDoc(imagesCollection, image);
-    }
-
-    async deleteProjectImage(projectId: string, imageId: string): Promise<void> {
-        const docRef = doc(this.firestore, `projects/${projectId}/images`, imageId);
-        await deleteDoc(docRef);
+        return this.getProject(projectId).pipe(
+            map(project => project?.images || [])
+        );
     }
 }

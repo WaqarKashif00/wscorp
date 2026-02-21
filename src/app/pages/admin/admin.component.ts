@@ -180,16 +180,19 @@ export class AdminComponent implements OnInit {
             // 2. Upload new gallery images
             const newuploadedImages: ProjectImage[] = [];
             if (this.selectedImages.length > 0) {
-                console.log('Admin: Uploading gallery images...');
-                for (const file of this.selectedImages) {
+                console.log(`Admin: Starting upload of ${this.selectedImages.length} gallery images...`);
+                for (let i = 0; i < this.selectedImages.length; i++) {
+                    const file = this.selectedImages[i];
+                    console.log(`Admin: Uploading image ${i + 1}/${this.selectedImages.length}: ${file.name}`);
                     const path = `projects/gallery/${Date.now()}_${file.name}`;
                     const url = await this.projectService.uploadImage(file, path);
                     newuploadedImages.push({
                         imageUrl: url,
-                        orderIndex: 0,
+                        orderIndex: i,
                         isFeatured: false
                     });
                 }
+                console.log('Admin: All gallery images uploaded.');
             }
 
             // 3. Combine and Re-Index
