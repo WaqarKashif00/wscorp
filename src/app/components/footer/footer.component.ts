@@ -11,12 +11,9 @@ import { RouterLink } from '@angular/router';
       <div class="container mx-auto px-6 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
           <div class="col-span-1 lg:col-span-1">
-            <a routerLink="/" class="flex items-center group gap-4 mb-10">
-              <div class="relative flex items-center justify-center">
-                <svg viewBox="0 0 100 100" class="h-10 w-10 text-white">
-                  <path d="M5 20 L30 85 L50 40 L70 85 L95 20" fill="none" stroke="currentColor" stroke-width="14" stroke-linejoin="miter"/>
-                  <path d="M30 20 L50 65 L70 20" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linejoin="miter" class="opacity-80"/>
-                </svg>
+            <a routerLink="/" class="flex items-center group gap-4 mb-10 h-12">
+              <div class="h-full flex items-center">
+                <img src="assets/logo.png" alt="Logo" class="h-full w-auto transform group-hover:scale-110 transition-transform duration-500">
               </div>
               <div class="flex flex-col leading-none">
                 <span class="text-3xl font-black text-white tracking-tighter">WV</span>

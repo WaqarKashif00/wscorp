@@ -1,15 +1,10 @@
 <header class="fixed w-full z-50 transition-all duration-700 glass border-none"
   [ngClass]="{'py-2 bg-black/95 shadow-lg': isScrolled || !isHomePage, 'py-6 bg-transparent': !isScrolled && isHomePage}">
   <nav class="container mx-auto px-6 flex justify-between items-center">
-    <a routerLink="/" class="flex h-8 items-center group gap-4 reveal-left visible">
+    <a routerLink="/" class="flex h-10 items-center group gap-4 reveal-left visible">
       <div class="h-full flex items-center">
-        <!-- Exact viewBox to match path bounds (Y: 20 to 85) -->
-        <svg viewBox="5 20 90 65"
-          class="h-full w-auto text-white transform group-hover:scale-110 transition-transform duration-500">
-          <path d="M5 20 L30 85 L50 40 L70 85 L95 20" fill="none" stroke="currentColor" stroke-width="12"
-            stroke-linejoin="miter" />
-          <path d="M30 20 L50 65 L70 20" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linejoin="miter" />
-        </svg>
+        <img src="assets/logo.png" alt="Logo"
+          class="h-full w-auto transform group-hover:scale-110 transition-transform duration-500">
       </div>
       <div class="flex flex-col justify-between h-full border-l border-white/20 pl-4 py-0.5">
         <span class="text-2xl font-black text-white tracking-tighter leading-none">WV</span>
