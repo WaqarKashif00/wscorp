@@ -51,6 +51,7 @@ export class AdminComponent implements OnInit {
     isEditing = false; // true if editing, false if creating
     showForm = false; // Toggle between list and form
     isLoading = false;
+    successMessage: string | null = null;
 
     // Image handling
     selectedCoverImage: File | null = null;
@@ -213,7 +214,7 @@ export class AdminComponent implements OnInit {
                 await this.projectService.createProject(projectData);
             }
 
-            this.cancelEdit();
+            this.showSuccessMessage('Project successfully uploaded!');
         } catch (error) {
             console.error('Error saving project', error);
             alert('Error saving project: ' + error);
@@ -302,5 +303,13 @@ export class AdminComponent implements OnInit {
     dropNew(event: CdkDragDrop<string[]>) {
         moveItemInArray(this.selectedImagePreviews, event.previousIndex, event.currentIndex);
         moveItemInArray(this.selectedImages, event.previousIndex, event.currentIndex);
+    }
+
+    showSuccessMessage(message: string) {
+        this.cancelEdit();
+        this.successMessage = message;
+        setTimeout(() => {
+            this.successMessage = null;
+        }, 4000);
     }
 }

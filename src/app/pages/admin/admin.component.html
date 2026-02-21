@@ -41,6 +41,15 @@
                 </div>
             </div>
 
+            <!-- Success Notification -->
+            <div *ngIf="successMessage" class="success-toast">
+                <div class="success-toast-content">
+                    <span class="success-icon">✓</span>
+                    <span class="success-text">{{ successMessage }}</span>
+                    <button class="success-close" (click)="successMessage = null">✕</button>
+                </div>
+            </div>
+
             <!-- Project List -->
             <div *ngIf="!showForm" class="space-y-6">
                 <button (click)="startCreate()"
