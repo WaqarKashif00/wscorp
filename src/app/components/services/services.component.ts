@@ -23,7 +23,7 @@ export class ServicesPreviewComponent {
     {
       title: '3D MODELING',
       description: 'High-fidelity 3D renderings and visualizations to bring your concept to life before construction starts.',
-      image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=800'
+      image: '/assets/images/3dmodel.jpg'
     },
     {
       title: 'STRUCTURAL DRAWINGS',
@@ -37,7 +37,7 @@ export class ServicesPreviewComponent {
     {
       title: 'MEP DESIGNS',
       description: 'Integrated Mechanical, Electrical, and Plumbing engineering solutions for complex building systems.',
-      image: 'https://images.unsplash.com/photo-1518349619113-03114f06ac3a?auto=format&fit=crop&q=80&w=800'
+      image: 'assets/images/MEP.png'
     },
     {
       title: 'TENANT LAYOUTS',
