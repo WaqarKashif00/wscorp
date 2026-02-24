@@ -31,7 +31,7 @@ export class ProjectService {
     private zone: NgZone = inject(NgZone);
 
     constructor() {
-        console.log('ProjectService: Initialized');
+        
     }
 
     // Get all published projects for public view (Real-time)

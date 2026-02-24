@@ -24,11 +24,9 @@ export class AdminComponent implements OnInit {
     projects: Project[] = [];
     projects$ = this.user$.pipe(
         switchMap(user => {
-            console.log('Auth state update for admin:', user ? 'Logged In' : 'Logged Out');
             if (user) {
                 return this.projectService.getAllProjects().pipe(
                     tap(projects => {
-                        console.log('Admin projects loaded:', projects.length, projects);
                         this.projects = projects;
                     }),
                     catchError(err => {
@@ -144,14 +142,12 @@ export class AdminComponent implements OnInit {
 
         try {
             const formValue = this.projectForm.value;
-            console.log('Admin: Saving project...', formValue.title);
             let featuredImageUrl = formValue.featuredImageUrl;
 
             // 1. Upload Cover Image if selected
             if (this.selectedCoverImage) {
                 const path = `projects/covers/${Date.now()}_${this.selectedCoverImage.name}`;
                 featuredImageUrl = await this.projectService.uploadImage(this.selectedCoverImage, path);
-                console.log('Admin: New cover image uploaded:', featuredImageUrl);
             }
 
             const projectData: Partial<Project> = {
@@ -180,10 +176,8 @@ export class AdminComponent implements OnInit {
             // 2. Upload new gallery images
             const newuploadedImages: ProjectImage[] = [];
             if (this.selectedImages.length > 0) {
-                console.log(`Admin: Starting upload of ${this.selectedImages.length} gallery images...`);
                 for (let i = 0; i < this.selectedImages.length; i++) {
                     const file = this.selectedImages[i];
-                    console.log(`Admin: Uploading image ${i + 1}/${this.selectedImages.length}: ${file.name}`);
                     const path = `projects/gallery/${Date.now()}_${file.name}`;
                     const url = await this.projectService.uploadImage(file, path);
                     newuploadedImages.push({
@@ -192,7 +186,6 @@ export class AdminComponent implements OnInit {
                         isFeatured: false
                     });
                 }
-                console.log('Admin: All gallery images uploaded.');
             }
 
             // 3. Combine and Re-Index
