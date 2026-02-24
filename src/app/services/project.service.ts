@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import {
     Firestore,
     collection,
@@ -15,6 +15,7 @@ import {
     getDocs,
     setDoc
 } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
 import { Storage, ref, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Observable, from, map, tap, of, catchError } from 'rxjs';
 import { Project, ProjectImage } from '../models/project.model';
@@ -26,9 +27,11 @@ import { environment } from '../../environments/environment';
 export class ProjectService {
     private firestore: Firestore = inject(Firestore);
     private storage: Storage = inject(Storage);
+    private auth: Auth = inject(Auth);
+    private zone: NgZone = inject(NgZone);
 
     constructor() {
-        console.log('ProjectService: Initialized with Project ID:', environment.firebase.projectId);
+        console.log('ProjectService: Initialized');
     }
 
     // Get all published projects for public view (Real-time)
@@ -123,12 +126,8 @@ export class ProjectService {
         console.log('ProjectService: Attempting to save document ID:', newDocRef.id);
 
         // Add a 15-second timeout so it doesn't hang forever
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Firestore write timed out after 15s. Check your internet or Firebase Rules.')), 15000)
-        );
-
         try {
-            await Promise.race([setDoc(newDocRef, data), timeout]);
+            await this.zone.runOutsideAngular(() => setDoc(newDocRef, data));
             console.log('ProjectService: ✅ Project saved successfully!');
             return newDocRef.id;
         } catch (error) {
@@ -141,12 +140,8 @@ export class ProjectService {
         console.log('ProjectService: Updating project in Firestore...', id);
         const docRef = doc(this.firestore, 'projects', id);
 
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Firestore update timed out after 15s')), 15000)
-        );
-
         try {
-            await Promise.race([updateDoc(docRef, data), timeout]);
+            await this.zone.runOutsideAngular(() => updateDoc(docRef, data));
             console.log('ProjectService: ✅ Project updated successfully!');
         } catch (error) {
             console.error('ProjectService ERROR (updateProject):', error);
